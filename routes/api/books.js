@@ -67,6 +67,18 @@ router.get("/searchBook", (req, res) => {
   );
 });
 
+router.get("/getAllBooks", (req, res) => {
+
+  Book.find({}, function(err, docs) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ err: "Could not find" });
+    }
+
+    res.json(docs);
+  });
+});
+
 router.get("/deleteBook", (req, res) => {
   var bookId = req.bookIdToDelete;
 
@@ -78,5 +90,7 @@ router.get("/deleteBook", (req, res) => {
     res.status(200);
   });
 });
+
+
 
 module.exports = router;
