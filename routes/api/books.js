@@ -4,16 +4,68 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 
-// Load input validation
-const validateRegisterInput = require("../../validation/register");
-const validateLoginInput = require("../../validation/login");
-
-// Load User model
+// Load Book and User models
 const User = require("../../models/User");
+const Book = require("../../models/Book");
 
-// @route POST api/users/register
-// @desc Register user
-// @access Public
+
+router.post("/addBook", (req, res) => {
+    //Fetch book details from the request body
+    //Add this book to the user's list of owned books
+    //Add this book to the Books collection in the database to be retrieved in search later
+
+    console.log(req.body);
+
+    const newBook = new Book ({
+        bookName: req.body.bookName,
+        author: req.body.author,
+        price: req.body.price,
+        owner: req.body.owner
+    });
+
+    var bookId;
+
+    User.findOne({ email: req.body.owner }).then((user) => {
+        if (!user) {
+            //if not present return
+          return res.status(400).json({ err: "This user does not exist" });
+        } else {
+            //insert into books collection
+            //insert into user's list of books
+            newBook
+            .save()
+            .then((book) => {
+                bookId = book._id;
+                user.ownedBooks.push(bookId);
+                user.save();
+                res.json(book);
+            })
+            .catch((err) => console.log(err));
+        }
+    });
+});
+
+router.get("/search", (req, res) => {
+
+    //search using the requested string and return a list of result books
+    var searchString = req.query.searchString;
+    console.log(searchString)
+    Book.find({bookName: {"$regex": searchString, "$options": "i"}}, function(err, docs)
+        {
+            if(err)
+            {
+                console.log(err);
+                res.status(500).json({err: "Could not find"});
+            }
+
+            console.log(docs);
+            res.json(docs)
+        }
+    );
+
+
+});
+
 router.post("/register", (req, res) => {
   // Form validation
   const { errors, isValid } = validateRegisterInput(req.body);
@@ -31,7 +83,6 @@ router.post("/register", (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
-        ownedBooks: []
       }); // Hash password before saving in database
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {

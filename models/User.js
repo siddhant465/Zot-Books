@@ -23,5 +23,17 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  address: {
+    type: String,
+    required: true
+  },
+  zipCode: {
+    type: Number,
+    required: true
+  },
+  ownedBooks: {
+    type: Array,
+    required: true
+  }
 });
 module.exports = User = mongoose.model("users", UserSchema);
