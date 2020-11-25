@@ -63,23 +63,6 @@ function Header(props) {
               </Grid>
             </Hidden>
             <Grid item xs />
-            <Grid item>
-              <Link className={classes.link} href="#" variant="body2">
-                Go to docs
-              </Link>
-            </Grid>
-            <Grid item>
-              <Tooltip title="Alerts • No alerts">
-                <IconButton color="inherit">
-                  <NotificationsIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid>
-            <Grid item>
-              <IconButton color="inherit" className={classes.iconButtonAvatar}>
-                <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" />
-              </IconButton>
-            </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
@@ -97,6 +80,7 @@ function Header(props) {
                 Welcome {user.firstName}!
               </Typography>
             </Grid>
+
             <Grid item>
               <Button
                 className={classes.button}
@@ -109,28 +93,19 @@ function Header(props) {
               </Button>
             </Grid>
             <Grid item>
-              <Tooltip title="Help">
+              <Tooltip title="Alerts • No alerts">
                 <IconButton color="inherit">
-                  <HelpIcon />
+                  <NotificationsIcon />
                 </IconButton>
               </Tooltip>
             </Grid>
+            <Grid item>
+              <IconButton color="inherit" className={classes.iconButtonAvatar}>
+                <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" />
+              </IconButton>
+            </Grid>
           </Grid>
         </Toolbar>
-      </AppBar>
-      <AppBar
-        component="div"
-        className={classes.secondaryBar}
-        color="primary"
-        position="static"
-        elevation={0}
-      >
-        <Tabs value={0} textColor="inherit">
-          <Tab textColor="inherit" label="Users" />
-          <Tab textColor="inherit" label="Sign-in method" />
-          <Tab textColor="inherit" label="Templates" />
-          <Tab textColor="inherit" label="Usage" />
-        </Tabs>
       </AppBar>
     </React.Fragment>
   );

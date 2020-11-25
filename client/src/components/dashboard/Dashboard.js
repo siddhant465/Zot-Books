@@ -15,13 +15,16 @@ import Link from "@material-ui/core/Link";
 import Navigator from "./Navigator";
 import Content from "./Content";
 import Header from "./Header";
+import SearchBooks from "./subDashboard/SearchBooks";
+import AddBooks from "./subDashboard/AddBooks";
+import ListedBooks from "./subDashboard/ListedBooks";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+        Zot Books
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -173,6 +176,9 @@ function Dashboard(props) {
   const { user } = props.auth;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  // Conditional rendering
+  const [screen, setScreen] = React.useState("");
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -180,6 +186,10 @@ function Dashboard(props) {
   const onLogoutClick = (e) => {
     e.preventDefault();
     props.logoutUser();
+  };
+
+  const handleScreen = (screenName) => {
+    setScreen(screenName);
   };
 
   return (
@@ -193,10 +203,14 @@ function Dashboard(props) {
               variant="temporary"
               open={mobileOpen}
               onClose={handleDrawerToggle}
+              changeScreen={handleScreen}
             />
           </Hidden>
           <Hidden xsDown implementation="css">
-            <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+            <Navigator
+              PaperProps={{ style: { width: drawerWidth } }}
+              changeScreen={handleScreen}
+            />
           </Hidden>
         </nav>
         <div className={classes.app}>
@@ -206,7 +220,11 @@ function Dashboard(props) {
             user={user}
           />
           <main className={classes.main}>
-            <Content />
+            {/* Render Screens */}
+            {screen === "Search Books" && <SearchBooks />}
+            {screen === "Add Books" && <AddBooks />}
+            {screen === "Listed Books" && <ListedBooks />}
+            {/* <Content /> */}
           </main>
           <footer className={classes.footer}>
             <Copyright />

@@ -21,24 +21,24 @@ import PhonelinkSetupIcon from "@material-ui/icons/PhonelinkSetup";
 
 const categories = [
   {
-    id: "Develop",
+    id: "Activities",
     children: [
-      { id: "Authentication", icon: <PeopleIcon />, active: true },
-      { id: "Database", icon: <DnsRoundedIcon /> },
-      { id: "Storage", icon: <PermMediaOutlinedIcon /> },
-      { id: "Hosting", icon: <PublicIcon /> },
-      { id: "Functions", icon: <SettingsEthernetIcon /> },
-      { id: "ML Kit", icon: <SettingsInputComponentIcon /> },
+      { id: "Search Books", icon: <PeopleIcon />, active: true },
+      { id: "Add Books", icon: <DnsRoundedIcon /> },
+      { id: "Listed Books", icon: <PermMediaOutlinedIcon /> },
+      // { id: "Hosting", icon: <PublicIcon /> },
+      // { id: "Functions", icon: <SettingsEthernetIcon /> },
+      // { id: "ML Kit", icon: <SettingsInputComponentIcon /> },
     ],
   },
-  {
-    id: "Quality",
-    children: [
-      { id: "Analytics", icon: <SettingsIcon /> },
-      { id: "Performance", icon: <TimerIcon /> },
-      { id: "Test Lab", icon: <PhonelinkSetupIcon /> },
-    ],
-  },
+  // {
+  //   id: "Quality",
+  //   children: [
+  //     { id: "Analytics", icon: <SettingsIcon /> },
+  //     { id: "Performance", icon: <TimerIcon /> },
+  //     { id: "Test Lab", icon: <PhonelinkSetupIcon /> },
+  //   ],
+  // },
 ];
 
 const styles = (theme) => ({
@@ -83,7 +83,11 @@ const styles = (theme) => ({
 });
 
 function Navigator(props) {
-  const { classes, ...other } = props;
+  const { classes, changeScreen, ...other } = props;
+
+  const handleClick = (screenName) => {
+    changeScreen(screenName);
+  };
 
   return (
     <Drawer variant="permanent" {...other}>
@@ -91,18 +95,18 @@ function Navigator(props) {
         <ListItem
           className={clsx(classes.firebase, classes.item, classes.itemCategory)}
         >
-          Paperbase
+          Zot Books
         </ListItem>
         <ListItem className={clsx(classes.item, classes.itemCategory)}>
           <ListItemIcon className={classes.itemIcon}>
-            <HomeIcon />
+            Book Market Place
           </ListItemIcon>
           <ListItemText
             classes={{
               primary: classes.itemPrimary,
             }}
           >
-            Project Overview
+            {/* Project Overview */}
           </ListItemText>
         </ListItem>
         {categories.map(({ id, children }) => (
@@ -121,6 +125,10 @@ function Navigator(props) {
                 key={childId}
                 button
                 className={clsx(classes.item, active && classes.itemActiveItem)}
+                onClick={() => {
+                  handleClick(childId);
+                }}
+                name={childId}
               >
                 <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
                 <ListItemText

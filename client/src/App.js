@@ -14,7 +14,7 @@ import Login from "./components/auth/Login";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 
-//npm install --save --legacy-peer-deps @material-ui/icons for React 17 + Material UI dependency issue
+//npm install --save   for React 17 + Material UI dependency issue
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
