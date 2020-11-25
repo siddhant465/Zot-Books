@@ -17,7 +17,9 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import SearchBar from "material-ui-search-bar";
 
 import BookCard from "./BookCard";
-import bookList from "./TestBookData";
+// import bookList from "./TestBookData";
+
+import axios from "axios";
 
 const useStyles = (theme) => ({
   paper: {
@@ -45,11 +47,24 @@ const useStyles = (theme) => ({
 export class SearchBooks extends Component {
   state = {
     searchValue: "",
-    // bookList: [{}],
+    bookList: [{}],
   };
 
   sendSearchRequest = (searchValue) => {
     console.log("Sending request: ", searchValue);
+
+    axios
+      .get(`http://localhost:5000/api/books/searchBook`, {
+        params: {
+          searchString: searchValue,
+        },
+      })
+      .then((res) => {
+        this.setState({ bookList: res.data });
+
+        console.log(res);
+        // this.setState({ isLoading: false });
+      });
   };
 
   getBookCard = (bookObj) => {
@@ -78,8 +93,8 @@ export class SearchBooks extends Component {
           />
         </Grid>
         <Grid container item spacing={5} justify="flex-start">
-          {/* {this.state.bookList.map((bookObj) => this.getBookCard(bookObj))} */}
-          {bookList.map((bookObj) => this.getBookCard(bookObj))}
+          {this.state.bookList.map((bookObj) => this.getBookCard(bookObj))}
+          {/* {bookList.map((bookObj) => this.getBookCard(bookObj))} */}
         </Grid>
       </Grid>
 
