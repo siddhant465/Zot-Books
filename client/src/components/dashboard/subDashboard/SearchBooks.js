@@ -17,6 +17,7 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import SearchBar from "material-ui-search-bar";
 
 import BookCard from "./BookCard";
+import CircularProgressComponent from "./../../layout/CircularProgressComponent";
 // import bookList from "./TestBookData";
 
 import axios from "axios";
@@ -48,10 +49,26 @@ export class SearchBooks extends Component {
   state = {
     searchValue: "",
     bookList: [{}],
+    isLoading: true,
   };
+
+  componentDidMount() {
+    axios
+      .get(`http://localhost:5000/api/books/getAllBooks`)
+      .then((res) => {
+        this.setState({ bookList: res.data });
+        this.setState({ isLoading: false });
+        console.log(res);
+        // this.setState({ isLoading: false });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   sendSearchRequest = (searchValue) => {
     console.log("Sending request: ", searchValue);
+    this.setState({ isLoading: true });
 
     axios
       .get(`http://localhost:5000/api/books/searchBook`, {
@@ -61,9 +78,13 @@ export class SearchBooks extends Component {
       })
       .then((res) => {
         this.setState({ bookList: res.data });
+        this.setState({ isLoading: false });
 
         console.log(res);
         // this.setState({ isLoading: false });
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -78,28 +99,43 @@ export class SearchBooks extends Component {
   render() {
     const { classes } = this.props;
 
-    return (
-      // <Paper className={classes.paper}>
-      <Grid className={classes.paper}>
-        <Grid item xs={12} style={{ marginBottom: 20 }}>
-          <SearchBar
-            value={this.state.searchValue}
-            onChange={(newSearchValue) =>
-              this.setState({ searchValue: newSearchValue })
-            }
-            onRequestSearch={() =>
-              this.sendSearchRequest(this.state.searchValue)
-            }
-          />
+    if (this.state.isLoading) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <CircularProgressComponent style={{ margin: "auto" }} />
+        </div>
+      );
+    } else
+      return (
+        // <Paper className={classes.paper}>
+        <Grid className={classes.paper}>
+          <Grid item xs={12} style={{ marginBottom: 20 }}>
+            <SearchBar
+              value={this.state.searchValue}
+              onChange={(newSearchValue) =>
+                this.setState({ searchValue: newSearchValue })
+              }
+              onRequestSearch={() =>
+                this.sendSearchRequest(this.state.searchValue)
+              }
+            />
+          </Grid>
+          <Grid container item spacing={5} justify="flex-start">
+            {this.state.bookList.map((bookObj) => this.getBookCard(bookObj))}
+            {/* {bookList.map((bookObj) => this.getBookCard(bookObj))} */}
+          </Grid>
         </Grid>
-        <Grid container item spacing={5} justify="flex-start">
-          {this.state.bookList.map((bookObj) => this.getBookCard(bookObj))}
-          {/* {bookList.map((bookObj) => this.getBookCard(bookObj))} */}
-        </Grid>
-      </Grid>
 
-      // </Paper>
-    );
+        // </Paper>
+      );
   }
 }
 

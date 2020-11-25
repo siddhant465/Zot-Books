@@ -30,7 +30,9 @@ const BookSchema = new Schema({
   },
   imageURL: {
     type: String,
-    required: true,
+    // required: true, //TODO: Make it required later, or add default image
+    default:
+      "https://st.depositphotos.com/1987177/3470/v/600/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg",
   },
   address: {
     type: String,

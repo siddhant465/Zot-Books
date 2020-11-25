@@ -16,7 +16,12 @@ import Divider from "@material-ui/core/Divider";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import MenuItem from "@material-ui/core/MenuItem";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import CloseIcon from "@material-ui/icons/Close";
+import axios from "axios";
 
 const useStyles = (theme) => ({
   paper: {
@@ -44,6 +49,10 @@ const useStyles = (theme) => ({
   appBar: {},
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export class AddBooks extends Component {
   state = {
     bookName: "",
@@ -54,6 +63,7 @@ export class AddBooks extends Component {
     zipCode: "",
     comments: "",
     // bookList: [{}],
+    snackBarOpen: false,
   };
 
   conditions = [
@@ -87,230 +97,235 @@ export class AddBooks extends Component {
     this.setState({ condition: e.target.value });
   };
 
+  handleCloseSnackBar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ snackBarOpen: false });
+  };
+
   submitBook = () => {
     console.log("Submitting");
     const newBook = {
       bookName: this.state.bookName,
       authorName: this.state.authorName,
       price: this.state.price,
-      owner: "Temporary owner", // TODO: Add the owner in the frontend later from redux
+      owner: "pmorye@uci.edu", // TODO: Add the owner in the frontend later from redux
       condition: this.state.condition,
       comments: this.state.comments,
       imageURL: this.state.imageURL,
       address: this.state.address,
       zipCode: this.state.zipCode,
     };
+
+    axios
+      .post(`http://localhost:5000/api/books/addBook`, newBook)
+      .then((res) => {
+        console.log(res);
+        this.setState({ snackBarOpen: true });
+        // console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // this.setState({ snackBarOpen: true });
+    console.log(newBook);
   };
 
   render() {
     const { classes } = this.props;
 
     return (
-      <Paper>
-        <AppBar
-          className={classes.titleBar}
-          position="static"
-          color="transparent"
-          elevation={0}
-        >
-          <Toolbar>
-            <Grid
-              container
-              spacing={2}
-              alignItems="center"
-              style={{ marginTop: "5px" }}
-            >
-              <Grid item xs>
-                <Typography
-                  variant="h3"
-                  // color="primary"
-                  style={{
-                    color: "linear-gradient(315deg, #000000 0%, #414141 74%)",
-                  }}
-                >
-                  {" "}
-                  Add Books{" "}
-                </Typography>
+      <>
+        <Paper>
+          <AppBar
+            className={classes.titleBar}
+            position="static"
+            color="transparent"
+            elevation={0}
+          >
+            <Toolbar>
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                style={{ marginTop: "5px" }}
+              >
+                <Grid item xs>
+                  <Typography
+                    variant="h3"
+                    // color="primary"
+                    style={{
+                      color: "linear-gradient(315deg, #000000 0%, #414141 74%)",
+                    }}
+                  >
+                    {" "}
+                    Add Books{" "}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="large"
+                    className={classes.addUser}
+                    onClick={this.submitBook}
+                    // style={{
+                    //   background:
+                    //     "linear-gradient(315deg, #000000 0%, #414141 74%)",
+                    // }}
+                  >
+                    Add Book
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  size="large"
-                  className={classes.addUser}
-                  onClick={this.submitBook}
-                  // style={{
-                  //   background:
-                  //     "linear-gradient(315deg, #000000 0%, #414141 74%)",
-                  // }}
-                >
-                  Add Book
-                </Button>
-              </Grid>
-            </Grid>
-          </Toolbar>
-        </AppBar>
+            </Toolbar>
+          </AppBar>
 
-        <Grid
-          container
-          className={classes.contentWrapper}
-          direction="row"
-          // justify="space-evenly"
-          alignItems="center"
-          spacing={3}
-        >
-          <Grid item xs={3}>
-            <TextField
-              required
-              label="Book Name"
-              variant="outlined"
-              name="bookName"
-              autoFocus
-              id="bookName"
-              onChange={this.onChange}
-              value={this.state.bookName}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <TextField
-              required
-              label="Author Name"
-              variant="outlined"
-              name="authorName"
-              id="authorName"
-              onChange={this.onChange}
-              value={this.state.authorName}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <TextField
-              required
-              label="Price"
-              variant="outlined"
-              name="price"
-              id="price"
-              onChange={this.onChange}
-              value={this.state.price}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={2}>
-            <TextField
-              select
-              label="Select condition of the book"
-              value={this.state.condition}
-              id="condition"
-              defaultValue=""
-              onChange={this.onChangeDropDown}
-              variant="outlined"
-              fullWidth
-            >
-              {this.conditions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          <Grid item xs={3}>
-            <TextField
-              required
-              label="Address"
-              variant="outlined"
-              name="address"
-              id="address"
-              onChange={this.onChange}
-              value={this.state.address}
-            />
-          </Grid>
-
-          <Grid item xs={3}>
-            <TextField
-              required
-              label="Zip Code"
-              variant="outlined"
-              id="zipCode"
-              name="zipCode"
-              onChange={this.onChange}
-              value={this.state.zipCode}
-            />
-          </Grid>
-
-          <Grid item xs={5}>
-            <input
-              accept="image/*"
-              className={classes.input}
-              style={{ display: "none" }}
-              id="raised-button-file"
-              multiple
-              type="file"
-            />
-            <label htmlFor="raised-button-file">
-              <Button
+          <Grid
+            container
+            className={classes.contentWrapper}
+            direction="row"
+            // justify="space-evenly"
+            alignItems="center"
+            spacing={3}
+          >
+            <Grid item xs={3}>
+              <TextField
+                required
+                label="Book Name"
                 variant="outlined"
-                component="span"
-                color="default"
-                className={classes.button}
-                startIcon={<CloudUploadIcon />}
+                name="bookName"
+                autoFocus
+                id="bookName"
+                onChange={this.onChange}
+                value={this.state.bookName}
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <TextField
+                required
+                label="Author Name"
+                variant="outlined"
+                name="authorName"
+                id="authorName"
+                onChange={this.onChange}
+                value={this.state.authorName}
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <TextField
+                required
+                label="Price"
+                variant="outlined"
+                name="price"
+                id="price"
+                onChange={this.onChange}
+                value={this.state.price}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <TextField
+                select
+                label="Select condition of the book"
+                value={this.state.condition}
+                id="condition"
+                defaultValue=""
+                onChange={this.onChangeDropDown}
+                variant="outlined"
                 fullWidth
               >
-                <Typography color="textSecondary">Upload Picture</Typography>
-              </Button>
-            </label>
+                {this.conditions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
+            <Grid item xs={3}>
+              <TextField
+                required
+                label="Address"
+                variant="outlined"
+                name="address"
+                id="address"
+                onChange={this.onChange}
+                value={this.state.address}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
+              <TextField
+                required
+                label="Zip Code"
+                variant="outlined"
+                id="zipCode"
+                name="zipCode"
+                onChange={this.onChange}
+                value={this.state.zipCode}
+              />
+            </Grid>
+
+            <Grid item xs={5}>
+              <input
+                accept="image/*"
+                className={classes.input}
+                style={{ display: "none" }}
+                id="raised-button-file"
+                multiple
+                type="file"
+              />
+              <label htmlFor="raised-button-file">
+                <Button
+                  variant="outlined"
+                  component="span"
+                  color="default"
+                  className={classes.button}
+                  startIcon={<CloudUploadIcon />}
+                  fullWidth
+                >
+                  <Typography color="textSecondary">Upload Picture</Typography>
+                </Button>
+              </label>
+            </Grid>
+
+            <Grid item xs={11}>
+              <TextField
+                required
+                label="Additional Comments"
+                variant="outlined"
+                name="comments"
+                id="comments"
+                multiline
+                fullWidth
+                onChange={this.onChange}
+                value={this.state.comments}
+              />
+            </Grid>
           </Grid>
-
-          <Grid item xs={11}>
-            <TextField
-              required
-              label="Additional Comments"
-              variant="outlined"
-              name="comments"
-              id="comments"
-              multiline
-              fullWidth
-              onChange={this.onChange}
-              value={this.state.comments}
-            />
-          </Grid>
-        </Grid>
-      </Paper>
-
-      // <Grid
-      //   className={classes.paper}
-      //   container
-      //   direction="row"
-      //   justify="center"
-      //   alignItems="center"
-      //   spacing={2}
-      // >
-      //   <Grid item xs={8}>
-      //     <Typography variant="h4"> Add Books</Typography>
-      //   </Grid>
-
-      //   <Grid item xs={4}>
-      //     <Button>Add Book!</Button>
-      //   </Grid>
-      //   <Paper className={classes.paper} elevation={5}>
-      //     <Grid item xs={12}>
-      //       sadadsasdasd
-      //     </Grid>
-      //     <Grid item xs={12}>
-      //       sadadsasdasd
-      //     </Grid>
-      //     <Grid item xs={12}>
-      //       {" "}
-      //       sadadsasdasd
-      //     </Grid>
-      //     <Grid item xs={12}>
-      //       sadadsasdasd
-      //     </Grid>
-      //   </Paper>
-      // </Grid>
+        </Paper>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          open={this.state.snackBarOpen}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackBar}
+          message="Book Posted Successfully!"
+        >
+          <Alert onClose={this.handleCloseSnackBar} severity="info">
+            Book Submitted Succesfully!
+          </Alert>
+        </Snackbar>
+      </>
     );
   }
 }
