@@ -14,6 +14,17 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import { CardHeader } from "@material-ui/core";
 
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+import axios from "axios";
+
 const styles = (theme) => ({
   paper: {
     maxWidth: 936,
@@ -56,6 +67,10 @@ const styles = (theme) => ({
   },
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function BookCard(props) {
   const {
     classes,
@@ -70,54 +85,163 @@ function BookCard(props) {
     imageURL,
   } = props;
 
+  const { user } = props; // Get user data
+
+  // Snackbar hooks
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [emailSuccess, setEmailSuccess] = React.useState(false);
+
+  //Form Dialog hooks
+  const [openFormDialog, setOpenFormDialog] = React.useState(false);
+  const [messageBody, setMessageBody] = React.useState("");
+
+  const handleClickOpenFormDialog = () => {
+    setOpenFormDialog(true);
+  };
+
+  const handleCloseFormDialog = () => {
+    setOpenFormDialog(false);
+  };
+
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+
+  const emailOwner = (user, owner, bookName) => {
+    console.log(user);
+    const emailObj = {
+      toEmail: owner,
+      ccEmail: user.email,
+      bookName,
+      message: messageBody,
+    };
+
+    console.log(emailObj);
+    axios
+      .post(`http://localhost:5000/api/users/emailOwner`, emailObj)
+      .then((res) => {
+        console.log(res);
+        setEmailSuccess(true);
+        setOpenSnackBar(true);
+        // console.log(res.data);
+      })
+      .catch((error) => {
+        setEmailSuccess(false);
+        setOpenSnackBar(true);
+        console.log(error);
+      });
+  };
+
   return (
     // <Paper className={classes.paper}>
+    <>
+      <Paper>
+        <Card className={classes.root}>
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
 
-    <Paper>
-      <Card className={classes.root}>
-        <CardActionArea>
-          <CardMedia
-            className={classes.media}
+              // image={require("./images/temp_image.jpg")}
+              // title="Contemplative Reptile"
+            >
+              <img className={classes.mediaImage} src={imageURL} />
+            </CardMedia>
+            <CardHeader title={bookName} subheader={authorName}></CardHeader>
+            <CardContent>
+              <Typography variant="body2" color="textSecondary" component="p">
+                <b>Price:</b> {price}$ <br />
+                <b>Condition:</b> {condition} <br />
+                <b>Location:</b> {address}, {zipCode} <br />
+                <b>Comments:</b> {comments} <br />
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+          <CardActions>
+            <Button
+              size="small"
+              color="primary"
+              // id={_id}
+              onClick={() => {
+                // sendConnectionRequest(_id, startupName, user, email);
+                handleClickOpenFormDialog();
+                // handleClick();
+              }}
+            >
+              Connect
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              // id={_id}
+              // onClick={() => getProfile(_id, isMentor, handleViewingProfile)}
+            >
+              Learn More
+            </Button>
+          </CardActions>
+        </Card>
+      </Paper>
 
-            // image={require("./images/temp_image.jpg")}
-            // title="Contemplative Reptile"
-          >
-            <img className={classes.mediaImage} src={imageURL} />
-          </CardMedia>
-          <CardHeader title={bookName} subheader={authorName}></CardHeader>
-          <CardContent>
-            <Typography variant="body2" color="textSecondary" component="p">
-              <b>Price:</b> {price}$ <br />
-              <b>Condition:</b> {condition} <br />
-              <b>Location:</b> {address}, {zipCode} <br />
-              <b>Comments:</b> {comments} <br />
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-        <CardActions>
+      <Dialog
+        open={openFormDialog}
+        onClose={handleCloseFormDialog}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Contact the Owner! </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter the message that you'd like to send the owner! (Share
+            your contact information, or decide on a pickup location.)
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Message"
+            type="text"
+            fullWidth
+            onChange={(e) => setMessageBody(e.target.value)}
+            value={messageBody}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseFormDialog} color="primary">
+            Cancel
+          </Button>
           <Button
-            size="small"
-            color="primary"
-            // id={_id}
             onClick={() => {
-              // sendConnectionRequest(_id, startupName, user, email);
-              //   handleClickOpenForm();
-              // handleClick();
+              emailOwner(user, owner, bookName);
+              handleCloseFormDialog();
             }}
+            color="primary"
           >
             Connect
           </Button>
-          <Button
-            size="small"
-            color="primary"
-            // id={_id}
-            // onClick={() => getProfile(_id, isMentor, handleViewingProfile)}
-          >
-            Learn More
-          </Button>
-        </CardActions>
-      </Card>
-    </Paper>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackBar}
+        message="Email sent successfully!"
+      >
+        {emailSuccess ? (
+          <Alert onClose={handleCloseSnackBar} severity="info">
+            Email sent succesfully!
+          </Alert>
+        ) : (
+          <Alert onClose={handleCloseSnackBar} severity="error">
+            Something went wrong with the email :(
+          </Alert>
+        )}
+      </Snackbar>
+    </>
   );
 }
 

@@ -3,8 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
-var nodemailer = require('nodemailer');
-
+const nodemailer = require("nodemailer");
 
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
@@ -35,7 +34,7 @@ router.post("/register", (req, res) => {
         password: req.body.password,
         address: req.body.address,
         zipCode: req.body.zipCode,
-        ownedBooks: []
+        ownedBooks: [],
       }); // Hash password before saving in database
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -77,6 +76,7 @@ router.post("/login", (req, res) => {
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
+          email: user.email,
         };
 
         // Sign token
@@ -103,36 +103,43 @@ router.post("/login", (req, res) => {
 });
 
 router.post("/emailOwner", (req, res) => {
+  const { toEmail, ccEmail, bookName, message } = req.body;
 
-  var toEmail, ccEmail, subject, content;
+  // console.log("content");
 
-  toEmail = req.body.toEmail;
-  ccEmail = req.body.ccEmail;
-  subject = req.body.subject;
-  content = req.body.content;
-
-  console.log("content");
-
-  var transporter = nodemailer.createTransport({
-    service: 'gmail',
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
     auth: {
-      user: 'zotbooksuci@gmail.com',
-      pass: 'sexyboisid@forever69'
-    }
+      user: "zotbooksuci@gmail.com",
+      pass: "sexyboisid@forever69",
+    },
   });
-  
-  var mailOptions = {
-    from: 'zotbooksuci@gmail.com',
+
+  const mailOptions = {
+    from: "zotbooksuci@gmail.com",
     to: toEmail,
-    subject: subject,
-    text: content,
-    cc: [ccEmail, "sdeshmu1@uci.edu", "ritwickv@uci.edu"]
+    subject: `You have a new request for your book: ${bookName}!`,
+    html: `Hi!
+    <br/>
+    <br/>
+    ${ccEmail} would like to connect with you regarding your recently listed book: 
+    <br/>
+    <b>${bookName}<b/>!
+    <br/>
+    <br/>
+    <b>Message from buyer:</b>
+    <br/>
+    <i>${message}</i>
+    <br/>
+    <br/>
+    *<b>Please contact the buyer using the email provided if interested.</b>*`,
+    cc: [ccEmail],
   };
-  
-  transporter.sendMail(mailOptions, function(error, info){
+
+  transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
-      res.status(500).json({"error": error});
+      res.status(500).json({ error: error });
     } else {
       res.json("Email successfully sent");
     }

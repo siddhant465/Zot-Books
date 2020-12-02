@@ -21,7 +21,7 @@ const lightColor = "rgba(255, 255, 255, 0.7)";
 
 const styles = (theme) => ({
   secondaryBar: {
-    zIndex: 0,
+    // zIndex: 0,
   },
   menuButton: {
     marginLeft: -theme.spacing(1),
@@ -47,7 +47,7 @@ function Header(props) {
 
   return (
     <React.Fragment>
-      <AppBar color="primary" position="sticky" elevation={0}>
+      <AppBar color="primary" position="static" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} alignItems="center">
             <Hidden smUp>
@@ -70,7 +70,7 @@ function Header(props) {
         component="div"
         className={classes.secondaryBar}
         color="primary"
-        position="static"
+        position="sticky"
         elevation={0}
       >
         <Toolbar>

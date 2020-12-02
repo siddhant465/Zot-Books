@@ -79,7 +79,7 @@ class Register extends Component {
     password: "",
     password2: "",
     address: "",
-    zipcode: "",
+    zipCode: "",
     errors: {},
   };
 
@@ -110,6 +110,7 @@ class Register extends Component {
       password: this.state.password,
       password2: this.state.password2,
       address: this.state.address,
+      zipCode: this.state.zipCode,
     };
     console.log(newUser);
     this.props.registerUser(newUser, this.props.history);
@@ -233,14 +234,14 @@ class Register extends Component {
                     variant="outlined"
                     required
                     fullWidth
-                    id="zipcode"
+                    id="zipCode"
                     label="Zip Code"
-                    name="zipcode"
+                    name="zipCode"
                     autoComplete="zipcode"
                     onChange={this.onChange}
-                    value={this.state.zipcode}
-                    error={errors.zipcode}
-                    helperText={errors.zipcode}
+                    value={this.state.zipCode}
+                    error={errors.zipCode}
+                    helperText={errors.zipCode}
                   />
                 </Grid>
                 <Grid item xs={12}>

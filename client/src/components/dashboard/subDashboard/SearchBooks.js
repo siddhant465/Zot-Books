@@ -50,6 +50,7 @@ export class SearchBooks extends Component {
     searchValue: "",
     bookList: [{}],
     isLoading: true,
+    user: this.props.user,
   };
 
   componentDidMount() {
@@ -91,7 +92,7 @@ export class SearchBooks extends Component {
   getBookCard = (bookObj) => {
     return (
       <Grid item>
-        <BookCard {...bookObj} />
+        <BookCard user={this.state.user} {...bookObj} />
       </Grid>
     );
   };

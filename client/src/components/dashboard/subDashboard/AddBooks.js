@@ -64,6 +64,8 @@ export class AddBooks extends Component {
     comments: "",
     // bookList: [{}],
     snackBarOpen: false,
+    bookPostSuccess: false,
+    user: this.props.user,
   };
 
   conditions = [
@@ -111,7 +113,7 @@ export class AddBooks extends Component {
       bookName: this.state.bookName,
       authorName: this.state.authorName,
       price: this.state.price,
-      owner: "pmorye@uci.edu", // TODO: Add the owner in the frontend later from redux
+      owner: this.state.user.email,
       condition: this.state.condition,
       comments: this.state.comments,
       imageURL: this.state.imageURL,
@@ -123,14 +125,15 @@ export class AddBooks extends Component {
       .post(`http://localhost:5000/api/books/addBook`, newBook)
       .then((res) => {
         console.log(res);
+        this.setState({ bookPostSuccess: true });
         this.setState({ snackBarOpen: true });
-        // console.log(res.data);
       })
       .catch((error) => {
         console.log(error);
+        this.setState({ bookPostSuccess: false });
+        this.setState({ snackBarOpen: true });
       });
-    // this.setState({ snackBarOpen: true });
-    console.log(newBook);
+    // console.log(newBook);
   };
 
   render() {
@@ -321,9 +324,15 @@ export class AddBooks extends Component {
           onClose={this.handleCloseSnackBar}
           message="Book Posted Successfully!"
         >
-          <Alert onClose={this.handleCloseSnackBar} severity="info">
-            Book Submitted Succesfully!
-          </Alert>
+          {this.state.bookPostSuccess ? (
+            <Alert onClose={this.handleCloseSnackBar} severity="info">
+              Book Submitted Succesfully!
+            </Alert>
+          ) : (
+            <Alert onClose={this.handleCloseSnackBar} severity="error">
+              Something went wrong while submitting the book :(
+            </Alert>
+          )}
         </Snackbar>
       </>
     );

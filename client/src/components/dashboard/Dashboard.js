@@ -221,8 +221,8 @@ function Dashboard(props) {
           />
           <main className={classes.main}>
             {/* Render Screens */}
-            {screen === "Search Books" && <SearchBooks />}
-            {screen === "Add Books" && <AddBooks />}
+            {screen === "Search Books" && <SearchBooks user={user} />}
+            {screen === "Add Books" && <AddBooks user={user} />}
             {screen === "Listed Books" && <ListedBooks />}
             {/* <Content /> */}
           </main>
