@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
+var nodemailer = require('nodemailer');
+
 
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
@@ -31,6 +33,8 @@ router.post("/register", (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
+        address: req.body.address,
+        zipCode: req.body.zipCode,
         ownedBooks: []
       }); // Hash password before saving in database
       bcrypt.genSalt(10, (err, salt) => {
@@ -95,6 +99,43 @@ router.post("/login", (req, res) => {
           .json({ passwordincorrect: "Password incorrect." });
       }
     });
+  });
+});
+
+router.post("/emailOwner", (req, res) => {
+
+  var toEmail, ccEmail, subject, content;
+
+  toEmail = req.body.toEmail;
+  ccEmail = req.body.ccEmail;
+  subject = req.body.subject;
+  content = req.body.content;
+
+  console.log("content");
+
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'zotbooksuci@gmail.com',
+      pass: 'sexyboisid@forever69'
+    }
+  });
+  
+  var mailOptions = {
+    from: 'zotbooksuci@gmail.com',
+    to: toEmail,
+    subject: subject,
+    text: content,
+    cc: [ccEmail, "sdeshmu1@uci.edu", "ritwickv@uci.edu"]
+  };
+  
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+      res.status(500).json({"error": error});
+    } else {
+      res.json("Email successfully sent");
+    }
   });
 });
 
