@@ -81,16 +81,37 @@ router.get("/getAllBooks", (req, res) => {
 
 router.delete("/deleteBook", (req, res) => {
   var bookId = req.bookId;
+  var ownerEmail, owner;
 
-  Book.deleteOne({ _id: bookId }, function (err) {
-    if (err) {
+  Book.findById(bookId, function(err, book) {
+    if(err){
       console.log(err);
-      res.status(500).json({ err: "Could not find book" });
+      res.status(500).json({ error: "Could not find book" });
     }
-    else
-    {
-      // TODO: remove from user as well
-      res.status(200);
+    else{
+      ownerEmail = book.owner;
+      User.findById({email: ownerEmail}).then( (user) => {
+        if(!user)
+        {
+          res.status(404).json({error: "User not found"});
+        }
+        else{
+          owner = user;
+          book.remove(function(err, result){
+            if(err)
+            {
+              console.log(err);
+              res.status(200).json({error: err});
+            }
+            var index = user.ownedBooks.indexOf(bookId);
+            if (index > -1) {
+              user.splice(index, 1);
+              user.save();
+            }
+            return res.status(200);
+          });
+        }
+      });
     }
   });
 });
@@ -115,8 +136,18 @@ router.put("updateBook", (req, res) => {
   var bookId = req.bookId;
  
 
-  // Book.findOneAndUpdate
-  
+  Book.findOneAndUpdate({_id: bookId}, req.bookToUpdate, {new: true}, function(err, result) {
+    
+    if(err)
+    {
+      console.log(err);
+      res.json({error: err});
+    }
+
+    console.log(result);
+    res.status(200);
+
+  });
 })
 
 router.get("/getAllListedBooks", (req, res) => {
