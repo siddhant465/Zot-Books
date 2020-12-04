@@ -23,6 +23,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 import axios from "axios";
 
 const styles = (theme) => ({
@@ -71,7 +74,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function BookCard(props) {
+function ListedBookCard(props) {
   const {
     classes,
     bookName,
@@ -170,15 +173,15 @@ function BookCard(props) {
                 // handleClick();
               }}
             >
-              Connect
+              <EditIcon/>{" "}Edit
             </Button>
             <Button
               size="small"
-              color="primary"
+              color="secondary"
               // id={_id}
               // onClick={() => getProfile(_id, isMentor, handleViewingProfile)}
             >
-              Learn More
+             <DeleteIcon/>{" "}Delete
             </Button>
           </CardActions>
         </Card>
@@ -245,8 +248,8 @@ function BookCard(props) {
   );
 }
 
-BookCard.propTypes = {
+ListedBookCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(BookCard);
+export default withStyles(styles)(ListedBookCard);

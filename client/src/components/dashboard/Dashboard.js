@@ -223,7 +223,7 @@ function Dashboard(props) {
             {/* Render Screens */}
             {screen === "Search Books" && <SearchBooks user={user} />}
             {screen === "Add Books" && <AddBooks user={user} />}
-            {screen === "Listed Books" && <ListedBooks />}
+            {screen === "Listed Books" && <ListedBooks user={user} />}
             {/* <Content /> */}
           </main>
           <footer className={classes.footer}>
