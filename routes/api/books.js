@@ -130,7 +130,7 @@ router.get("/getAllListedBooks", (req, res) => {
       res.status(404).json({error: "User not found"});
     }
     else{
-      res.status(200).json(user);
+      res.status(200).json(user.ownedBooks);
     }
   });
 })
