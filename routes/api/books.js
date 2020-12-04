@@ -79,7 +79,7 @@ router.get("/getAllBooks", (req, res) => {
   });
 });
 
-router.get("/deleteBook", (req, res) => {
+router.delete("/deleteBook", (req, res) => {
   var bookId = req.bookIdToDelete;
 
   Book.deleteOne({ _id: bookId }, function (err) {
