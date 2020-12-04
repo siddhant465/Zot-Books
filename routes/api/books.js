@@ -80,8 +80,8 @@ router.get("/getAllBooks", (req, res) => {
 });
 
 router.delete("/deleteBook", (req, res) => {
-  var bookId = req.bookId;
-  var ownerEmail, owner;
+  var bookId = req.query.bookId;
+  var ownerEmail;
 
   Book.findById(bookId, function(err, book) {
     if(err){
@@ -90,13 +90,13 @@ router.delete("/deleteBook", (req, res) => {
     }
     else{
       ownerEmail = book.owner;
-      User.findById({email: ownerEmail}).then( (user) => {
+      console.log(ownerEmail)
+      User.findOne({email: ownerEmail}).then( (user) => {
         if(!user)
         {
           res.status(404).json({error: "User not found"});
         }
         else{
-          owner = user;
           book.remove(function(err, result){
             if(err)
             {
@@ -105,10 +105,11 @@ router.delete("/deleteBook", (req, res) => {
             }
             var index = user.ownedBooks.indexOf(bookId);
             if (index > -1) {
-              user.splice(index, 1);
+              user.ownedBooks.splice(index, 1);
               user.save();
             }
-            return res.status(200);
+            console.log(user);
+            return res.status(200).json(user);
           });
         }
       });
