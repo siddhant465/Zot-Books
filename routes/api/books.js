@@ -117,7 +117,9 @@ router.delete("/deleteBook", (req, res) => {
 });
 
 router.get("/getOneBook", (req, res) => {
-  var bookId = req.bookId;
+  
+  console.log(req);
+  var bookId = req.query.bookId;
 
   Book.findById(bookId).then((book) => {
     if(!book)
@@ -131,22 +133,19 @@ router.get("/getOneBook", (req, res) => {
 
 });
 
-router.put("updateBook", (req, res) => {
+router.put("/updateBook", (req, res) => {
   
-  var bookId = req.bookId;
- 
-
-  Book.findOneAndUpdate({_id: bookId}, req.bookToUpdate, {new: true}, function(err, result) {
-    
+  var bookId = req.body.bookId;
+  Book.findOneAndUpdate({_id: bookId}, req.body.bookToUpdate, {new: true}, function(err, result) {
     if(err)
     {
       console.log(err);
       res.json({error: err});
     }
-
-    console.log(result);
-    res.status(200);
-
+    else{
+      console.log(result);
+      res.status(200).json();
+    }
   });
 })
 
