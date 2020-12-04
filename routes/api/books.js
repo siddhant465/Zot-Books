@@ -32,7 +32,7 @@ router.post("/addBook", (req, res) => {
   User.findOne({ email: req.body.owner }).then((user) => {
     if (!user) {
       //if not present return
-      return res.status(400).json({ err: "This user does not exist" });
+      return res.status(404).json({ err: "This user does not exist" });
     } else {
       //insert into books collection
       //insert into user's list of books
@@ -80,17 +80,59 @@ router.get("/getAllBooks", (req, res) => {
 });
 
 router.delete("/deleteBook", (req, res) => {
-  var bookId = req.bookIdToDelete;
+  var bookId = req.bookId;
 
   Book.deleteOne({ _id: bookId }, function (err) {
     if (err) {
       console.log(err);
       res.status(500).json({ err: "Could not find book" });
     }
-    res.status(200);
+    else
+    {
+      // TODO: remove from user as well
+      res.status(200);
+    }
   });
 });
 
+router.get("/getOneBook", (req, res) => {
+  var bookId = req.bookId;
 
+  Book.findById(bookId).then((book) => {
+    if(!book)
+    {
+      res.err(404).json({error: "Book not found"});
+    }
+    else{
+      res.json(book);
+    }
+  });
+
+});
+
+router.put("updateBook", (req, res) => {
+  
+  var bookId = req.bookId;
+  var 
+
+  // Book.findOneAndUpdate
+  
+})
+
+router.get("/getAllListedBooks", (req, res) => {
+
+  var owner = req.query.owner;
+
+  User.findOne({email: owner}, function(err, user) {
+    if(err)
+    {
+      console.log(err);
+      res.status(404).json({error: "User not found"});
+    }
+    else{
+      res.status(200).json(user);
+    }
+  });
+})
 
 module.exports = router;
