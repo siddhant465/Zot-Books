@@ -130,8 +130,16 @@ router.get("/getAllListedBooks", (req, res) => {
       res.status(404).json({error: "User not found"});
     }
     else{
-      res.status(200).json(user.ownedBooks);
+      var books = []
+      console.log(user.ownedBooks);
+      Book.find({
+        '_id': {$in: user.ownedBooks}
+      }, function(err, books) {
+        console.log(books);
+        res.status(200).json(books);
+      })      
     }
+
   });
 })
 
