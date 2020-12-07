@@ -33,6 +33,10 @@ const UserSchema = new Schema({
   },
   ownedBooks: {
     type: Array
+  },
+  wishlistBooks: {
+    type: Array
   }
+
 });
 module.exports = User = mongoose.model("users", UserSchema);
