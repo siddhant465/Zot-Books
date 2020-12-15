@@ -32,8 +32,11 @@ const UserSchema = new Schema({
     required: true
   },
   ownedBooks: {
-    type: Array,
-    required: true
+    type: Array
+  },
+  wishlistBooks: {
+    type: Array
   }
+
 });
 module.exports = User = mongoose.model("users", UserSchema);

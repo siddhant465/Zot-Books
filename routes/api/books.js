@@ -80,23 +80,52 @@ router.get("/getAllBooks", (req, res) => {
 });
 
 router.delete("/deleteBook", (req, res) => {
-  var bookId = req.bookId;
+  var bookId = req.query.bookId;
+  var ownerEmail;
 
-  Book.deleteOne({ _id: bookId }, function (err) {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ err: "Could not find book" });
-    }
-    else
+  Book.findById(bookId, function(err, book) {
+    if(err)
     {
-      // TODO: remove from user as well
-      res.status(200);
+      console.log(err);
+      res.status(500).json(err);
+    }
+    else{
+      if(!book)
+      {
+        res.status(404).json({error: "Book not found"});
+      }
+      ownerEmail = book.owner;
+      console.log(ownerEmail)
+      User.findOne({email: ownerEmail}).then( (user) => {
+        if(!user)
+        {
+          res.status(404).json({error: "User not found"});
+        }
+        else{
+          book.remove(function(err, result){
+            if(err)
+            {
+              console.log(err);
+              return res.status(500).json({error: err});
+            }
+            var index = user.ownedBooks.indexOf(bookId);
+            if (index > -1) {
+              user.ownedBooks.splice(index, 1);
+              user.save();
+            }
+            console.log(user);
+            return res.status(200).json(user);
+          });
+        }
+      });
     }
   });
 });
 
 router.get("/getOneBook", (req, res) => {
-  var bookId = req.bookId;
+  
+  console.log(req);
+  var bookId = req.query.bookId;
 
   Book.findById(bookId).then((book) => {
     if(!book)
@@ -110,13 +139,20 @@ router.get("/getOneBook", (req, res) => {
 
 });
 
-router.put("updateBook", (req, res) => {
+router.put("/updateBook", (req, res) => {
   
-  var bookId = req.bookId;
- 
-
-  // Book.findOneAndUpdate
-  
+  var bookId = req.body.bookId;
+  Book.findOneAndUpdate({_id: bookId}, req.body.bookToUpdate, {new: true}, function(err, result) {
+    if(err)
+    {
+      console.log(err);
+      res.json({error: err});
+    }
+    else{
+      console.log(result);
+      res.status(200).json();
+    }
+  });
 })
 
 router.get("/getAllListedBooks", (req, res) => {
@@ -127,12 +163,100 @@ router.get("/getAllListedBooks", (req, res) => {
     if(err)
     {
       console.log(err);
-      res.status(404).json({error: "User not found"});
+      return res.status(500).json(err);
     }
     else{
-      res.status(200).json(user.ownedBooks);
+      if(!user)
+      {
+        return res.status(404).json({error: "User not found"});
+      }
+      console.log(user.ownedBooks);
+      Book.find({
+        '_id': {$in: user.ownedBooks}
+      }, function(err, books) {
+        console.log(books);
+        res.status(200).json(books);
+      })      
     }
+
   });
+})
+
+router.get("/getWishlistedBooks", (req, res) => {
+
+  var userEmail = req.query.userEmail;
+
+  User.findOne({email: userEmail}, (err, user) => {
+    if(err)
+    {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+    else{
+      if(!user)
+      {
+        return res.status(404).json({error: "User not found"});
+      }
+      Book.find({
+
+        //TODO: Add lazy delete functionality
+        '_id': {$in: user.wishlistBooks}
+      }, function(err, books) {
+        console.log(books);
+        return res.status(200).json(books);
+      })
+    }
+  })
+})
+
+router.put("/addToWishlist", (req, res) => {
+
+  var userEmail = req.body.userEmail;
+  var bookId = req.body.bookId;
+
+  User.findOne({email: userEmail}, function(err, user) {
+    if(err)
+    {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+    else{
+      if(!user)
+      {
+        return res.status(404).json({error: "User not found"});
+      }
+      user.wishlistBooks.push(bookId);
+      user.save();
+      return res.status(200).json(user.wishlistBooks);
+    }
+  })
+})
+
+router.delete("/removeFromWishlist", (req, res) => {
+
+  var userEmail = req.query.userEmail;
+  var bookId = req.query.bookId;
+
+  User.findOne({email: userEmail}, function(err, user) {
+    if(err)
+    {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+    else{
+      if(!user)
+      {
+        return res.status(404).json({error: "User not found"});
+      }
+      var index = user.wishlistBooks.indexOf(bookId);
+      console.log(index)
+      if (index > -1) {
+        user.wishlistBooks.splice(index, 1);
+        user.save();
+      }
+      return res.status(200).json(user.wishlistBooks);
+    }
+  })
 })
 
 module.exports = router;
