@@ -26,6 +26,8 @@ import MuiAlert from "@material-ui/lab/Alert";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import EditBook from "./EditBook";
+
 import axios from "axios";
 
 const styles = (theme) => ({
@@ -179,7 +181,7 @@ function ListedBookCard(props) {
               size="small"
               color="secondary"
               // id={_id}
-              // onClick={() => getProfile(_id, isMentor, handleViewingProfile)}
+            //   onClick={() => getProfile(_id, isMentor, handleViewingProfile)}
             >
              <DeleteIcon/>{" "}Delete
             </Button>
@@ -190,9 +192,10 @@ function ListedBookCard(props) {
       <Dialog
         open={openFormDialog}
         onClose={handleCloseFormDialog}
-        aria-labelledby="form-dialog-title"
+        maxWidth="lg"
       >
-        <DialogTitle id="form-dialog-title">Contact the Owner! </DialogTitle>
+          <EditBook/>
+        {/* <DialogTitle id="form-dialog-title">Contact the Owner! </DialogTitle>
         <DialogContent>
           <DialogContentText>
             Please enter the message that you'd like to send the owner! (Share
@@ -221,7 +224,7 @@ function ListedBookCard(props) {
           >
             Connect
           </Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
 
       <Snackbar

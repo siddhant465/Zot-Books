@@ -57,12 +57,9 @@ export class ListedBooks extends Component {
     axios
       .get(`http://localhost:5000/api/books/getAllListedBooks`,
       {
-        params: 
-        {
+        params: {
           owner: this.state.user.email,
-          }
-        }
-        )  //change
+       }})  //change
       .then((res) => {
         this.setState({ bookList: res.data });
         this.setState({ isLoading: false });

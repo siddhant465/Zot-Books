@@ -19,13 +19,17 @@ import TimerIcon from "@material-ui/icons/Timer";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PhonelinkSetupIcon from "@material-ui/icons/PhonelinkSetup";
 
+import FindInPageIcon from '@material-ui/icons/FindInPage';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+
 const categories = [
   {
     id: "Activities",
     children: [
-      { id: "Search Books", icon: <PeopleIcon />, active: true },
-      { id: "Add Books", icon: <DnsRoundedIcon /> },
-      { id: "Listed Books", icon: <PermMediaOutlinedIcon /> },
+      { id: "Search Books", icon: <FindInPageIcon />, active: true },
+      { id: "Add Books", icon: <AddBoxIcon /> },
+      { id: "Listed Books", icon: <LibraryBooksIcon /> },
       // { id: "Hosting", icon: <PublicIcon /> },
       // { id: "Functions", icon: <SettingsEthernetIcon /> },
       // { id: "ML Kit", icon: <SettingsInputComponentIcon /> },
