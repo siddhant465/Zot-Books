@@ -145,4 +145,43 @@ router.post("/emailOwner", (req, res) => {
   });
 });
 
+router.get("/getUserDetails", (req, res) => {
+  var userEmail = req.query.email;
+  console.log(userEmail);
+  User.findOne({email: userEmail}, function(err, result) {
+
+    if(err)
+    {
+      console.log(err);
+      return res.status(500).json({error: err});
+    }
+    else if(!result)
+    {
+      return res.status(404)
+    }
+    else{
+      console.log(result)
+      return res.status(200).json({result: result});
+    }
+  })
+})
+
+router.put("/updateUser", (req, res)=> {
+
+  var userEmail = req.body.email;
+  var userDetails = req.body.userDetails;
+  console.log(userDetails);
+  User.findOneAndUpdate({email: userEmail}, userDetails, {new: true}, function(err, result) {
+    if(err)
+    {
+      console.log(err);
+      return res.json({error: err});
+    }
+    else{
+      console.log(result);
+      res.status(200).json(result);
+    }
+  })
+})
+
 module.exports = router;
