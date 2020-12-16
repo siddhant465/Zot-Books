@@ -64,8 +64,9 @@ export class EditBook extends Component {
     comments: "",
     // bookList: [{}],
     snackBarOpen: false,
-    bookPostSuccess: false,
+    bookPutSuccess: false,
     user: this.props.user,
+    _id: this.props._id,
   };
 
   conditions = [
@@ -107,9 +108,11 @@ export class EditBook extends Component {
     this.setState({ snackBarOpen: false });
   };
 
-  submitBook = () => {
-    console.log("Submitting");
-    const newBook = {
+  updateBook = () => {
+    console.log("Updating book");
+    
+    const bookId =  this.state._id;
+    const bookToUpdate = {
       bookName: this.state.bookName,
       authorName: this.state.authorName,
       price: this.state.price,
@@ -121,16 +124,18 @@ export class EditBook extends Component {
       zipCode: this.state.zipCode,
     };
 
+    console.log(bookToUpdate);
+
     axios
-      .post(`http://localhost:5000/api/books/addBook`, newBook)
+      .put(`http://localhost:5000/api/books/updateBook`, {bookId, bookToUpdate})
       .then((res) => {
         console.log(res);
-        this.setState({ bookPostSuccess: true });
+        this.setState({ bookPutSuccess: true });
         this.setState({ snackBarOpen: true });
       })
       .catch((error) => {
         console.log(error);
-        this.setState({ bookPostSuccess: false });
+        this.setState({ bookPutSuccess: false });
         this.setState({ snackBarOpen: true });
       });
     // console.log(newBook);
@@ -173,7 +178,7 @@ export class EditBook extends Component {
                     color="primary"
                     size="large"
                     className={classes.addUser}
-                    onClick={this.submitBook}
+                    onClick={this.updateBook}
                     // style={{
                     //   background:
                     //     "linear-gradient(315deg, #000000 0%, #414141 74%)",
@@ -322,15 +327,15 @@ export class EditBook extends Component {
           open={this.state.snackBarOpen}
           autoHideDuration={6000}
           onClose={this.handleCloseSnackBar}
-          message="Book Posted Successfully!"
+          message="Book Updated Successfully!"
         >
-          {this.state.bookPostSuccess ? (
+          {this.state.bookPutSuccess ? (
             <Alert onClose={this.handleCloseSnackBar} severity="info">
-              Book Submitted Succesfully!
+              Book Updated Succesfully!
             </Alert>
           ) : (
             <Alert onClose={this.handleCloseSnackBar} severity="error">
-              Something went wrong while submitting the book :(
+              Something went wrong while updating the book :(
             </Alert>
           )}
         </Snackbar>

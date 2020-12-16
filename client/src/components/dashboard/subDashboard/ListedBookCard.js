@@ -79,6 +79,7 @@ function Alert(props) {
 function ListedBookCard(props) {
   const {
     classes,
+    _id,
     bookName,
     authorName,
     price,
@@ -94,7 +95,10 @@ function ListedBookCard(props) {
 
   // Snackbar hooks
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [openSnackBarDelete, setOpenSnackBarDelete] = React.useState(false);
   const [emailSuccess, setEmailSuccess] = React.useState(false);
+  const [deleteSuccess, setDeleteSuccess] = React.useState(false);
+  
 
   //Form Dialog hooks
   const [openFormDialog, setOpenFormDialog] = React.useState(false);
@@ -114,6 +118,30 @@ function ListedBookCard(props) {
     }
     setOpenSnackBar(false);
   };
+
+  const handleCloseSnackBarDelete = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBarDelete(false);
+  };
+
+  const deleteBook = (_id) => {
+    console.log("Printing id from delete book: ", _id)
+
+    axios
+    .delete(`http://localhost:5000/api/books/deleteBook?bookId=${_id}`)
+    .then((res) => {
+      console.log(res);
+      setDeleteSuccess(true);
+      setOpenSnackBarDelete(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setDeleteSuccess(false);
+      setOpenSnackBarDelete(true);
+    });
+  }
 
   const emailOwner = (user, owner, bookName) => {
     console.log(user);
@@ -138,6 +166,8 @@ function ListedBookCard(props) {
         setOpenSnackBar(true);
         console.log(error);
       });
+
+  
   };
 
   return (
@@ -181,7 +211,10 @@ function ListedBookCard(props) {
               size="small"
               color="secondary"
               // id={_id}
-            //   onClick={() => getProfile(_id, isMentor, handleViewingProfile)}
+              onClick={()=>
+              {
+                deleteBook(_id)
+              }}
             >
              <DeleteIcon/>{" "}Delete
             </Button>
@@ -194,7 +227,7 @@ function ListedBookCard(props) {
         onClose={handleCloseFormDialog}
         maxWidth="lg"
       >
-          <EditBook/>
+          <EditBook _id= {_id} user={user}/>
         {/* <DialogTitle id="form-dialog-title">Contact the Owner! </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -244,6 +277,27 @@ function ListedBookCard(props) {
         ) : (
           <Alert onClose={handleCloseSnackBar} severity="error">
             Something went wrong with the email :(
+          </Alert>
+        )}
+      </Snackbar>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        open={openSnackBarDelete}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackBarDelete}
+        // message="Email sent successfully!"
+      >
+        {deleteSuccess ? (
+          <Alert onClose={handleCloseSnackBarDelete} severity="info">
+            Book deleted succesfully!
+          </Alert>
+        ) : (
+          <Alert onClose={handleCloseSnackBarDelete} severity="error">
+            Something went wrong with the deletion :(
           </Alert>
         )}
       </Snackbar>

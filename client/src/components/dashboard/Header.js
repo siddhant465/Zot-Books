@@ -17,6 +17,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
 const lightColor = "rgba(255, 255, 255, 0.7)";
 
 const styles = (theme) => ({
@@ -41,9 +43,15 @@ const styles = (theme) => ({
   },
 });
 
+
+
 function Header(props) {
-  const { classes, onDrawerToggle, onLogoutClick, user } = props;
+  const { classes, onDrawerToggle, onLogoutClick, user, changeScreen } = props;
   console.log("user");
+
+  const handleClick = (screenName) => {
+    changeScreen(screenName);
+  };
 
   return (
     <React.Fragment>
@@ -92,16 +100,17 @@ function Header(props) {
                 Log Out
               </Button>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Tooltip title="Alerts • No alerts">
                 <IconButton color="inherit">
                   <NotificationsIcon />
                 </IconButton>
               </Tooltip>
-            </Grid>
+            </Grid> */}
             <Grid item>
-              <IconButton color="inherit" className={classes.iconButtonAvatar}>
-                <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" />
+              <IconButton color="inherit" className={classes.iconButtonAvatar} onClick = {()=> {handleClick("Profile")}} >
+                {/* <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" /> */}
+                < AccountCircleIcon />
               </IconButton>
             </Grid>
           </Grid>

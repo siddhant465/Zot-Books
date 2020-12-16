@@ -18,6 +18,7 @@ import Header from "./Header";
 import SearchBooks from "./subDashboard/SearchBooks";
 import AddBooks from "./subDashboard/AddBooks";
 import ListedBooks from "./subDashboard/ListedBooks";
+import Profile from "./subDashboard/Profile";
 
 function Copyright() {
   return (
@@ -218,9 +219,11 @@ function Dashboard(props) {
             onDrawerToggle={handleDrawerToggle}
             onLogoutClick={onLogoutClick}
             user={user}
+            changeScreen={handleScreen}
           />
           <main className={classes.main}>
             {/* Render Screens */}
+            {screen === "Profile" && <Profile user={user} />}
             {screen === "Search Books" && <SearchBooks user={user} />}
             {screen === "Add Books" && <AddBooks user={user} />}
             {screen === "Listed Books" && <ListedBooks user={user} />}

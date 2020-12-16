@@ -19,6 +19,7 @@ import TimerIcon from "@material-ui/icons/Timer";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PhonelinkSetupIcon from "@material-ui/icons/PhonelinkSetup";
 
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import FindInPageIcon from '@material-ui/icons/FindInPage';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
@@ -27,7 +28,8 @@ const categories = [
   {
     id: "Activities",
     children: [
-      { id: "Search Books", icon: <FindInPageIcon />, active: true },
+      { id: "Profile", icon: <AccountBoxIcon />},
+      { id: "Search Books", icon: <FindInPageIcon />},
       { id: "Add Books", icon: <AddBoxIcon /> },
       { id: "Listed Books", icon: <LibraryBooksIcon /> },
       // { id: "Hosting", icon: <PublicIcon /> },
